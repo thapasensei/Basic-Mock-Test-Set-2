@@ -121,6 +121,54 @@
         .action-btn-reset { background: #ff9800; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-right: 4px; font-size: 12px; }
         .action-btn-copy { background: #0288d1; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-right: 4px; font-size: 12px; }
 
+        /* Perfect Aligned Registration Form Styles */
+        .register-form-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        .form-group-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .form-group-item label {
+            font-size: 12px;
+            font-weight: bold;
+            color: #0d47a1;
+        }
+        .form-group-item input {
+            height: 38px;
+            padding: 8px 12px;
+            border: 1px solid #90caf9;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+        }
+        .form-group-item input:focus {
+            border-color: #1976d2;
+            box-shadow: 0 0 0 2px rgba(25, 118, 210, 0.2);
+        }
+        .btn-generate {
+            height: 38px;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 0 16px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        .btn-generate:hover {
+            background: #1b5e20;
+        }
+
         #resultScreen { display: none; padding: 10px; text-align: left; }
         .scorecard-box { background: #ffffff; border: 2px solid #0d47a1; border-radius: 10px; padding: 16px; margin-bottom: 16px; }
         .score-header { text-align: center; border-bottom: 2px solid #e0e0e0; padding-bottom: 12px; margin-bottom: 12px; }
@@ -155,13 +203,15 @@
             .nav-btn { padding: 10px; font-size: 13px; }
             .question-box { padding: 8px; }
             .jft-audio-box { padding: 8px 10px; }
+            .register-form-row { flex-direction: column; align-items: stretch; }
+            .btn-generate { width: 100%; }
         }
     </style>
 </head>
 <body>
 
     <div style="display:none;">
-        <audio id="globalJftMedia" preload="auto" playsinline></audio>
+        <audio id="globalJftMedia" preload="auto" playsinline crossorigin="anonymous"></audio>
     </div>
 
     <div id="preloadContainer" style="display:none;"></div>
@@ -201,17 +251,21 @@
                 </div>
             </div>
 
-            <div style="background:#e3f2fd; padding:12px; border-radius:8px; margin-bottom:16px; border:1px solid #90caf9;">
-                <h4 style="color:#0d47a1; margin-bottom:8px; font-size:14px;">➕ Register New Student (Basic Level):</h4>
-                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-                    <input type="text" id="newStudentName" placeholder="Student Name..." style="flex:2; min-width:160px; padding:8px; border:1px solid #ccc; border-radius:4px; font-size:13px;">
+            <!-- Fixed Form Alignment -->
+            <div style="background:#e3f2fd; padding:14px; border-radius:8px; margin-bottom:16px; border:1px solid #90caf9;">
+                <h4 style="color:#0d47a1; margin-bottom:10px; font-size:14px;">➕ Register New Student (Basic Level):</h4>
+                <div class="register-form-row">
+                    <div class="form-group-item" style="flex:2; min-width:180px;">
+                        <label for="newStudentName">Student Name:</label>
+                        <input type="text" id="newStudentName" placeholder="Enter Full Name...">
+                    </div>
                     
-                    <div style="flex:1; min-width:140px; display:flex; flex-direction:column;">
-                        <label style="font-size:11px; color:#0d47a1; font-weight:bold;">Expiry Date:</label>
-                        <input type="date" id="expiryDatePicker" style="padding:6px; border:1px solid #ccc; border-radius:4px; font-weight:bold; color:#0d47a1; background:white; font-size:13px;">
+                    <div class="form-group-item" style="flex:1; min-width:150px;">
+                        <label for="expiryDatePicker">Expiry Date:</label>
+                        <input type="date" id="expiryDatePicker">
                     </div>
 
-                    <button onclick="addNewStudent()" style="background:#2e7d32; color:white; border:none; padding:8px 14px; border-radius:4px; font-weight:bold; cursor:pointer; margin-top:auto; font-size:13px;">Generate Code</button>
+                    <button onclick="addNewStudent()" class="btn-generate">Generate Code</button>
                 </div>
             </div>
 
@@ -231,20 +285,19 @@
                 </table>
             </div>
 
-            <h4 style="color:#0d47a1; margin-bottom:6px; font-size:14px;">📊 Student Exam Performance & Reports:</h4>
-            <div style="overflow-x:auto; max-height: 220px;">
+            <h4 style="color:#0d47a1; margin-bottom:6px; font-size:14px;">📊 Student Today's Exam Performance & Scores:</h4>
+            <div style="overflow-x:auto; max-height: 250px;">
                 <table class="student-table">
                     <thead>
                         <tr>
                             <th>Student Name</th>
                             <th>Code</th>
-                            <th>Latest Score</th>
-                            <th>Today's Attempts</th>
-                            <th>All Attempts History</th>
+                            <th>Today's Scores (Attempt Breakdown)</th>
+                            <th>Latest Date / Time</th>
                         </tr>
                     </thead>
                     <tbody id="studentReportTableBody">
-                        <tr><td colspan="5" style="text-align:center;">Loading reports...</td></tr>
+                        <tr><td colspan="4" style="text-align:center;">Loading reports...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -255,15 +308,15 @@
                 <div class="info-item"><strong>Candidate Name:</strong> <span id="loggedInNameDisplay"></span></div>
                 <div class="info-item"><strong>Test Level:</strong> JFT-Basic A1 Set 2</div>
                 <div class="info-item"><strong>Time Allowed:</strong> 60 Minutes</div>
-                <div class="info-item"><strong>Total Questions:</strong> 54 Questions</div>
+                <div class="info-item"><strong>Total Questions:</strong> 53 Questions</div>
             </div>
 
             <div class="instructions-title">Examination Guidelines & Instructions</div>
             <ul class="instructions-list">
                 <li><strong>Section 1:</strong> Script & Vocabulary (Q1 - Q15)</li>
-                <li><strong>Section 2:</strong> Conversation & Expression (Q1 - Q12)</li>
-                <li><strong>Section 3:</strong> Listening Comprehension (Q1 - Q12) - Audio plays up to 2 times only.</li>
-                <li><strong>Section 4:</strong> Reading Comprehension (Q1 - Q14)</li>
+                <li><strong>Section 2:</strong> Conversation & Expression (Q16 - Q26)</li>
+                <li><strong>Section 3:</strong> Listening Comprehension (Q27 - Q38) - Audio plays up to 2 times only.</li>
+                <li><strong>Section 4:</strong> Reading Comprehension (Q39 - Q52)</li>
                 <li><strong style="color:#d32f2f;">Daily Limit:</strong> You are allowed a maximum of <strong>5 attempts</strong> per day.</li>
             </ul>
 
@@ -413,6 +466,11 @@
         
         examSteps.forEach(st => {
             if (st.img) allImages.add(st.img);
+            if (st.audioSrc) {
+                const aud = new Audio();
+                aud.preload = "auto";
+                aud.src = st.audioSrc;
+            }
             if (st.options) {
                 st.options.forEach(opt => {
                     if (typeof opt === 'string' && opt.match(/\.(jpeg|jpg|gif|png|webp)$/i)) {
@@ -531,7 +589,7 @@
                     <tr style="${isExpired ? 'background:#fff3e0;' : ''}">
                         <td><strong>${stu.name}</strong></td>
                         <td><code style="background:#eee; padding:2px 5px; color:#0d47a1; font-weight:bold;">${stu.code}</code></td>
-                        <td><small>${expDateStr}</small></td>
+                        <td><small style="font-weight:bold; color:#0d47a1;">${expDateStr}</small></td>
                         <td>${statusText}</td>
                         <td>
                             <button class="action-btn-copy" onclick="copyStudentDetails('${stu.name}', '${stu.code}')">Copy Details</button>
@@ -550,7 +608,7 @@
             tbody.innerHTML = "";
             const reports = snapshot.val();
             if (!reports) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">No exam attempts recorded yet for Set 2.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">No exam attempts recorded yet for Set 2.</td></tr>`;
                 return;
             }
 
@@ -558,25 +616,24 @@
 
             Object.keys(reports).forEach(code => {
                 let rep = reports[code];
-                let todayAttemptCount = (rep.attempts && rep.attempts[todayStr]) ? rep.attempts[todayStr] : 0;
-
-                let historyHtml = "<ul style='margin:0; padding-left:15px; font-size:12px;'>";
-                if (rep.history && Array.isArray(rep.history)) {
-                    rep.history.forEach((h, idx) => {
-                        historyHtml += `<li>Attempt ${idx+1} (${h.date}): <strong style="color:#0d47a1;">${h.score} / 250</strong></li>`;
+                
+                let scoresHtml = "";
+                if (rep.lastExamDate === todayStr && rep.dailyScores && Array.isArray(rep.dailyScores)) {
+                    scoresHtml = "<div style='display:flex; flex-wrap:wrap; gap:6px;'>";
+                    rep.dailyScores.forEach((sc, idx) => {
+                        scoresHtml += `<span style="background:#e3f2fd; color:#0d47a1; border:1px solid #90caf9; padding:2px 6px; border-radius:4px; font-size:12px; font-weight:bold;">#${idx+1}: ${sc}/250</span>`;
                     });
+                    scoresHtml += "</div>";
                 } else {
-                    historyHtml += `<li>Last: ${rep.lastScore || 0} / 250 (${rep.lastDate || 'N/A'})</li>`;
+                    scoresHtml = `<span style="color:#888; font-style:italic;">No attempts today (Last: ${rep.lastScore || 0}/250)</span>`;
                 }
-                historyHtml += "</ul>";
 
                 tbody.innerHTML += `
                     <tr>
                         <td><strong>${rep.name || 'Unknown'}</strong></td>
                         <td><code>${code}</code></td>
-                        <td><strong style="color:#0d47a1;">${rep.lastScore || 0} / 250</strong></td>
-                        <td><span style="background:#e3f2fd; padding:2px 6px; border-radius:4px; font-weight:bold;">${todayAttemptCount} / 5</span></td>
-                        <td>${historyHtml}</td>
+                        <td>${scoresHtml}</td>
+                        <td><small style="color:#555;">${rep.lastDate || 'N/A'}</small></td>
                     </tr>
                 `;
             });
@@ -650,9 +707,14 @@
 
             const todayStr = new Date().toISOString().split('T')[0];
 
-            db.ref(`${DB_REPORTS}/${codeInput}/attempts/${todayStr}`).once('value').then((attemptSnap) => {
-                let currentCount = attemptSnap.val() || 0;
-                /* Exactly 5 attempts allowed daily */
+            db.ref(`${DB_REPORTS}/${codeInput}`).once('value').then((repSnap) => {
+                let repData = repSnap.val() || {};
+                let currentCount = 0;
+
+                if (repData.lastExamDate === todayStr && repData.dailyScores) {
+                    currentCount = repData.dailyScores.length;
+                }
+
                 if (currentCount >= 5 && codeInput !== "TEACHER_ADMIN") {
                     errorBox.style.display = 'block';
                     errorBox.innerHTML = `⛔ **Daily Limit Reached:** You have already attempted the exam 5 times today for Set 2. Please try again tomorrow!`;
@@ -762,7 +824,7 @@
             ]
         },
 
-        /* SECTION 4: READING COMPREHENSION (UPDATED - 14 Questions) */
+        /* SECTION 4: READING COMPREHENSION (14 Questions) */
         {
             sectionId: 4, sectionName: "Section 4: Reading Comprehension", type: "reading_group", img: "d1_2.jpeg", paragraph: null,
             subQuestions: [
@@ -819,15 +881,6 @@
     let timerInterval, timeLeft = 60 * 60, audioPlayCounts = {}, isAudioPlayingCurrently = false;
 
     function startExam() {
-        if (loggedInStudentCode && loggedInStudentCode !== "TEACHER_ADMIN") {
-            const todayStr = new Date().toISOString().split('T')[0];
-            const attemptRef = db.ref(`${DB_REPORTS}/${loggedInStudentCode}/attempts/${todayStr}`);
-            attemptRef.transaction((currentCount) => {
-                return (currentCount || 0) + 1;
-            });
-            db.ref(`${DB_REPORTS}/${loggedInStudentCode}/name`).set(loggedInStudentName);
-        }
-
         document.getElementById('landingScreen').style.display = 'none';
         document.getElementById('examScreen').style.display = 'block';
         document.getElementById('studentDisplay').innerText = "User: " + loggedInStudentName;
@@ -1187,21 +1240,25 @@
         let finalJftScore = Math.round(10 + (grandCorrect / totalQuestions) * 240); 
 
         if (loggedInStudentCode && loggedInStudentCode !== "TEACHER_ADMIN") {
+            const todayStr = new Date().toISOString().split('T')[0];
             const reportRef = db.ref(`${DB_REPORTS}/${loggedInStudentCode}`);
+
             reportRef.once('value').then((snap) => {
-                let data = snap.val() || {};
-                let history = data.history || [];
-                
-                history.push({
-                    score: finalJftScore,
-                    date: new Date().toLocaleString()
-                });
+                let repData = snap.val() || {};
+                let dailyScores = repData.dailyScores || [];
+
+                if (repData.lastExamDate !== todayStr) {
+                    dailyScores = [];
+                }
+
+                dailyScores.push(finalJftScore);
 
                 reportRef.update({
                     name: loggedInStudentName,
                     lastScore: finalJftScore,
-                    lastDate: new Date().toLocaleDateString(),
-                    history: history
+                    lastDate: new Date().toLocaleString(),
+                    lastExamDate: todayStr,
+                    dailyScores: dailyScores
                 });
             });
         }
